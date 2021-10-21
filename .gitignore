@@ -1,2 +1,6 @@
 *#[1-9]
 firmware/build*
+<<<<<<< HEAD
+=======
+firmware/*~
+>>>>>>> 42fd4bf (Initial commit. Rev2.)
