@@ -1,0 +1,3 @@
+/home/liquidsquid/EAGLE/projects/AquariumDaglig/firmware/build/CMakeFiles/rebuild_cache.dir
+/home/liquidsquid/EAGLE/projects/AquariumDaglig/firmware/build/CMakeFiles/edit_cache.dir
+/home/liquidsquid/EAGLE/projects/AquariumDaglig/firmware/build/CMakeFiles/AquariumDaglig.dir
