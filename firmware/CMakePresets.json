@@ -12,13 +12,8 @@
 			"generator": "Ninja",
 			"binaryDir": "${sourceDir}/build",
 			"cacheVariables": {
-<<<<<<< HEAD
-				"CMAKE_C_COMPILER": "/home/liquidsquid/x-tools/avr/bin/avr-gcc",
-				"CMAKE_CXX_COMPILER": "/home/liquidsquid/x-tools/avr/bin/avr-g++"
-=======
 				"CMAKE_C_COMPILER": "avr-gcc",
 				"CMAKE_CXX_COMPILER": "avr-g++"
->>>>>>> 08b33cd (Initial commit. Rev2.)
 			}
 		}
 	]
