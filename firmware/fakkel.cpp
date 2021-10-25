@@ -21,7 +21,7 @@ ISR(TCB0_INT_vect) {
 
 ISR(AC0_AC_vect) {
 	AC0.STATUS = AC_CMP_bm;
-	fakkel._ontime = TCA0.SINGLE.CNT;
+	fakkel._maxOnTime = TCA0.SINGLE.CNT;
 }
 
 Fakkel::Fakkel(const uint16_t time) {
@@ -29,19 +29,23 @@ Fakkel::Fakkel(const uint16_t time) {
 	TCA0_init();
 	TCB0_init();
 	ports_init();
-	setDeadtime(time);
+	setDeadTime(time);
 }
 
-void Fakkel::setDeadtime(const uint16_t time) {
-	_deadtime = time;
+void Fakkel::setDeadTime(const uint16_t time) {
+	_deadTime = time;
 }
 
-uint16_t Fakkel::deadtime() const {
-	return _deadtime;
+uint16_t Fakkel::deadTime() const {
+	return _deadTime;
 }
 
-uint16_t Fakkel::ontime() const {
-	return _ontime;
+uint16_t Fakkel::onTimeLimit() const {
+	return _onTimeLimit;
+}
+
+uint16_t Fakkel::maxOnTime() const {
+	return _maxOnTime;
 }
 
 void Fakkel::setReference(VREF_DAC0REFSEL_enum ref) {
@@ -122,7 +126,6 @@ void Fakkel::comp_init() const {
 }
 
 void Fakkel::TCA0_init() const {
-	
 	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV1_gc |TCA_SINGLE_ENABLE_bm;
 }
 

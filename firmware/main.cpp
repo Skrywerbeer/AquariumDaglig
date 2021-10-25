@@ -3,7 +3,6 @@
 #define F_CPU 20e6
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <avr/sleep.h>
 
 #include "fakkel.h"
 #include "usart.h"
@@ -14,7 +13,7 @@
 
 FUSES{
 	.WDTCFG = 0,
-		.BODCFG = ACTIVE_DIS_gc,
+		.BODCFG = ACTIVE_ENABLED_gc | BOD_LVL_BODLEVEL7_gc,
 		.OSCCFG = FREQSEL_20MHZ_gc,
 		0xff,
 		0x00,
@@ -30,7 +29,7 @@ USART uart(USART::BAUDRATE::BAUD_9600, USART::PINMUX::ALTERNATE);
 
 void testCurrents() {
 	fakkel.disable();
-	fakkel.setDeadtime(100);
+	fakkel.setDeadTime(100);
 	fakkel.setPowerlevel(Fakkel::Powerlevel::Level1);
 	fakkel.enable();
 	uart << "Input voltages\n\r"; uart.finishTX();
@@ -53,7 +52,7 @@ void testCurrents() {
 void testChargeTimes() {
 	char time[5];
 	fakkel.disable();
-	fakkel.setDeadtime(1000);
+	fakkel.setDeadTime(1000);
 	fakkel.setPowerlevel(Fakkel::Powerlevel::Level1);
 	fakkel.enable();
 	uart << "Charge times\n\r"; uart.finishTX();
@@ -63,7 +62,7 @@ void testChargeTimes() {
 		utoa(i, i_str, 10);
 		uart << i_str; uart.finishTX();
 		uart << " : "; uart.finishTX();
-		utoa(fakkel.ontime(), time, 10);
+		utoa(fakkel.maxOnTime(), time, 10);
 		uart << (const char *)time;
 		uart.finishTX();
 		uart << "\n\r";
@@ -81,7 +80,7 @@ int main() {
 	CCP = CCP_IOREG_gc;
 	CLKCTRL.MCLKCTRLB = 0;
 	sei();
-	fakkel.setDeadtime(60);
+	fakkel.setDeadTime(80);
 	fakkel.setPowerlevel(Fakkel::Powerlevel::Level1);
 	fakkel.enable();
 	while (1) {
@@ -89,7 +88,7 @@ int main() {
 		// testChargeTimes();
 		// _delay_ms(1000);
 		adc.newSample();
-		if ((adc.lastValue > voltageToTicks(19.0)) &&
+		if ((adc.lastValue > voltageToTicks(18.5)) &&
 		    (fakkel.powerlevel() != Fakkel::Powerlevel::Level5)) {
 			++fakkel;
 		}
@@ -99,7 +98,7 @@ int main() {
 		}
 		uart << "current voltage: ";
 		char num[5];
-		utoa(adc.lastValue, num, 10);
+		utoa(adc.lastValue*(55000/1024), num, 10);
 		uart.finishTX();
 		uart << (const char *)num; uart.finishTX();
 		uart << " | power level: ";
