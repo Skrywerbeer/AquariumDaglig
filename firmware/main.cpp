@@ -89,7 +89,7 @@ int main() {
 		// testChargeTimes();
 		// _delay_ms(1000);
 		adc.newSample();
-		if ((adc.lastValue > voltageToTicks(18.0)) &&
+		if ((adc.lastValue > voltageToTicks(19.0)) &&
 		    (fakkel.powerlevel() != Fakkel::Powerlevel::Level5)) {
 			++fakkel;
 		}
@@ -107,6 +107,6 @@ int main() {
 		uart.finishTX();
 		uart << (const char *)num; uart.finishTX();
 		uart << "\n\r";
-		_delay_ms(100);
+		_delay_ms(1000);
 	}
 }
