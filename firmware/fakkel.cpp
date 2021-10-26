@@ -7,7 +7,7 @@ Fakkel fakkel;
 
 ISR(TCB0_INT_vect) {
 	TCB0.INTFLAGS = TCB_CAPTEI_bm;
-	TCA0.SINGLE.CNT = 0;
+	TCA0.SINGLE.CTRLESET = TCA_SINGLE_CMD_RESTART_gc;
 	_NOP();
 	_NOP();
 	_NOP();
@@ -28,16 +28,21 @@ Fakkel::Fakkel(const uint16_t time) {
 	comp_init();
 	TCA0_init();
 	TCB0_init();
+	CCL_init();
 	ports_init();
-	setDeadTime(time);
+	setOffTime(time);
 }
 
-void Fakkel::setDeadTime(const uint16_t time) {
-	_deadTime = time;
+void Fakkel::setOffTime(const uint16_t time) {
+	_offTime = time;
 }
 
-uint16_t Fakkel::deadTime() const {
-	return _deadTime;
+uint16_t Fakkel::offTime() const {
+	return _offTime;
+}
+
+void Fakkel::setOnTimeLimit(const uint16_t time) {
+	_onTimeLimit = time;
 }
 
 uint16_t Fakkel::onTimeLimit() const {
@@ -126,19 +131,31 @@ void Fakkel::comp_init() const {
 }
 
 void Fakkel::TCA0_init() const {
+	TCA0.SINGLE.PER = 0xffff;
+	TCA0.SINGLE.CMP0 = 0xffff;
+	TCA0.SINGLE.CTRLB = TCA_SINGLE_WGMODE_SINGLESLOPE_gc;
 	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV1_gc |TCA_SINGLE_ENABLE_bm;
 }
 
 void Fakkel::TCB0_init() const {
 	// Connect ASYNC event channel 0 to AC0 as generator
 	// and TCB0 as the user.
-	EVSYS.ASYNCCH0 = EVSYS_ASYNCCH0_AC0_OUT_gc;
+	// EVSYS.ASYNCCH0 = EVSYS_ASYNCCH0_AC0_OUT_gc;
+	EVSYS.ASYNCCH0 = EVSYS_ASYNCCH0_CCL_LUT0_gc;
 	EVSYS.ASYNCUSER0 = EVSYS_ASYNCUSER0_ASYNCCH0_gc;
 	TCB0.EVCTRL = TCB_CAPTEI_bm; // Start counter on positive edge.
 	TCB0.CTRLA = TCB_RUNSTDBY_bm;
 	// Configure TCB for single shot mode, set output asynchronously.
 	TCB0.CTRLB = TCB_CNTMODE_SINGLE_gc |  TCB_ASYNC_bm;
 	TCB0.INTCTRL = TCB_CAPTEI_bm;
+}
+
+void Fakkel::CCL_init() const {
+	CCL.LUT0CTRLB = CCL_INSEL1_AC0_gc | CCL_INSEL0_TCA0_gc;
+	CCL.LUT0CTRLC = CCL_INSEL2_MASK_gc;
+	CCL.TRUTH0 = 0b00001110; // IN0 or IN1.
+	CCL.LUT0CTRLA = CCL_ENABLE_bm;
+	CCL.CTRLA = CCL_ENABLE_bm;
 }
 
 void Fakkel::ports_init() const {

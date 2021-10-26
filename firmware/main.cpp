@@ -29,7 +29,7 @@ USART uart(USART::BAUDRATE::BAUD_9600, USART::PINMUX::ALTERNATE);
 
 void testCurrents() {
 	fakkel.disable();
-	fakkel.setDeadTime(100);
+	fakkel.setOffTime(100);
 	fakkel.setPowerlevel(Fakkel::Powerlevel::Level1);
 	fakkel.enable();
 	uart << "Input voltages\n\r"; uart.finishTX();
@@ -52,7 +52,7 @@ void testCurrents() {
 void testChargeTimes() {
 	char time[5];
 	fakkel.disable();
-	fakkel.setDeadTime(1000);
+	fakkel.setOffTime(1000);
 	fakkel.setPowerlevel(Fakkel::Powerlevel::Level1);
 	fakkel.enable();
 	uart << "Charge times\n\r"; uart.finishTX();
@@ -80,8 +80,9 @@ int main() {
 	CCP = CCP_IOREG_gc;
 	CLKCTRL.MCLKCTRLB = 0;
 	sei();
-	fakkel.setDeadTime(80);
+	fakkel.setOffTime(80);
 	fakkel.setPowerlevel(Fakkel::Powerlevel::Level1);
+	while (adc.newSample() < voltageToTicks(14.0))
 	fakkel.enable();
 	while (1) {
 		// testCurrents();

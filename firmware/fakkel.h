@@ -34,8 +34,8 @@ class Fakkel {
 			Level5
 		};
 		Fakkel(const uint16_t time=4);
-		void setDeadTime(const uint16_t time);
-		uint16_t deadTime() const;
+		void setOffTime(const uint16_t time);
+		uint16_t offTime() const;
 		void setOnTimeLimit(const uint16_t time);
 		uint16_t onTimeLimit() const;
 		uint16_t maxOnTime() const;
@@ -62,9 +62,10 @@ class Fakkel {
 		void comp_init() const;
 		void TCA0_init() const;
 		void TCB0_init() const;
+		void CCL_init() const;
 		void ports_init() const;
 
-		register16_t &_deadTime = TCB0.CCMP;
+		register16_t &_offTime = TCB0.CCMP;
 		register16_t &_onTimeLimit = TCA0.SINGLE.CMP0;
 		volatile uint16_t _maxOnTime = 0;
 		uint8_t _powerlevel = 0;
