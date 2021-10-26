@@ -13,7 +13,7 @@
 
 FUSES{
 	.WDTCFG = 0,
-		.BODCFG = ACTIVE_ENABLED_gc | BOD_LVL_BODLEVEL7_gc,
+		.BODCFG = ACTIVE_ENABLED_gc | BOD_LVL_BODLEVEL6_gc,
 		.OSCCFG = FREQSEL_20MHZ_gc,
 		0xff,
 		0x00,
@@ -80,16 +80,17 @@ int main() {
 	CCP = CCP_IOREG_gc;
 	CLKCTRL.MCLKCTRLB = 0;
 	sei();
-	fakkel.setOffTime(80);
+
+	fakkel.setDeadtime(80);
 	fakkel.setPowerlevel(Fakkel::Powerlevel::Level1);
-	while (adc.newSample() < voltageToTicks(14.0))
+	while (adc.newSample() < voltageToTicks(16.0));
 	fakkel.enable();
 	while (1) {
 		// testCurrents();
 		// testChargeTimes();
 		// _delay_ms(1000);
 		adc.newSample();
-		if ((adc.lastValue > voltageToTicks(18.5)) &&
+		if ((adc.lastValue > voltageToTicks(17.5)) &&
 		    (fakkel.powerlevel() != Fakkel::Powerlevel::Level5)) {
 			++fakkel;
 		}
@@ -97,16 +98,16 @@ int main() {
 		         (fakkel.powerlevel() != Fakkel::Powerlevel::Level1)){
 			--fakkel;
 		}
-		uart << "current voltage: ";
+		uart << "input voltage: ";
 		char num[5];
 		utoa(adc.lastValue*(55000/1024), num, 10);
 		uart.finishTX();
 		uart << (const char *)num; uart.finishTX();
-		uart << " | power level: ";
+		uart << "mv | power level: ";
 		utoa(static_cast<uint8_t>(fakkel.powerlevel()), num, 10);
 		uart.finishTX();
 		uart << (const char *)num; uart.finishTX();
 		uart << "\n\r";
-		_delay_ms(1000);
+		_delay_ms(500);
 	}
 }
