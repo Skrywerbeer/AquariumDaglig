@@ -1,5 +1,6 @@
 # AquariumDaglig
 This is my project for a switched solar day light. Unfortunatly I blew up my remaining LEDs so the firmware has stalled at this working version.
+[display.svg]
 ## Theory of Operation
 TCB0 is configured in single-shot mode, the start of which is triggered by AC0's output via the event system.
 When TCB0 is triggered PA6 is driven low, turning off the MOSFET allowing the inductor current to circulate
